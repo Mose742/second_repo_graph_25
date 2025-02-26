@@ -1,0 +1,89 @@
+
+# Learning objectives
+
+# Imports
+
+```{python}
+import pandas as pd
+
+pd.options.mode.copy_on_write = True
+
+```
+
+# dataset
+```{python}
+counties = pd.read_csv("data/us_counties_data.csv")
+counties
+```
+
+
+```{python}
+area_df= counties[["county", "area_sq_miles", "pop_20"]]
+
+area_df
+```
+# creating new var
+
+```{python}
+#made anew var in sq km
+area_df["area_sq_km"]=area_df["area_sq_miles"] * 2.59
+#new var in hectares
+area_df["area_hectares"] = area_df["area_sq_km"] * 100
+
+area_df
+```
+
+
+# practice Q1
+```{python}
+area_df["area_acres"]=area_df["area_sq_miles"] * 640
+area_df
+```
+
+# modify existing var
+
+
+```{python}
+area_df["area_sq_km"] = area_df["area_sq_km"].round(1)
+area_df
+```
+
+# Practice Q2
+```{python}
+area_df["area_acres"] = area_df["area_acres"].round(1)
+area_df
+```
+
+# calculating with multiple vars
+
+
+```{python}
+area_df["pop_per_sq_km"]= (area_df["pop_20"] / area_df ["area_sq_km"]).round(1)
+#sort
+area_df=area_df.sort_values(by="pop_per_sq_km", ascending= False)
+area_df
+```
+
+# foreign born
+
+```{python}
+area_df['pct_foreign_born'] = (area_df['foreign_born_num'] / area_df['pop_20']) * 100
+top_foreign_born = data[['county', 'pct_foreign_born']].sort_values(by='pct_foreign_born', ascending=False)
+
+# Get the top 2 counties with the highest percentage of foreign-born residents
+top_2_counties = top_foreign_born.head(2)
+```
+
+# creating boolean vars
+
+```{python}
+changes_df=counties[["county", "pop_change_2010_2020", "pct_emp_change_2010_2021"]]
+changes_df
+```
+
+
+```{python}
+changes_df["pop_increase"] = changes_df["pop_change_2010_2020"] > 0
+changes_df
+```
+

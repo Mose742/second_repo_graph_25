@@ -1,0 +1,112 @@
+
+# subsetting columns 
+
+# imports 
+
+
+```{python}
+import pandas as pd 
+```
+
+# dataset
+
+```{python}
+yao = pd.read_csv("data/yaounde_data.csv")
+yao
+```
+
+## selecting columns with square brackets
+
+```{python}
+yao[["age", "sex"]]
+
+```
+
+# storing data subsets
+
+
+```{python}
+yao_subset = yao[["age", "sex"]]
+yao_subset
+```
+
+
+```{python}
+yao_subset =yao_subset[["age"]]
+yao_subset
+```
+
+
+## select cols with []
+```{python}
+yao_weight_height = yao[["weight_kg", "height_cm"]]
+yao_weight_height
+```
+
+## excluding columns with drop()
+
+
+```{python}
+yao.drop(columns=["age"])
+```
+
+# practice drop()
+
+
+```{python}
+yao_no_education_consultation=yao.drop(columns=["highest_education", "consultation"])
+yao_no_education_consultation
+```
+
+
+## filter by regex- has ig 
+```{python}
+yao.filter(regex="ig")
+```
+
+# starts with ig 
+```{python}
+yao.filter(regex="^ig")
+```
+
+# ends with
+```{python}
+yao.filter(regex="results$")
+```
+
+```{python}
+yao_is_columns=yao.filter(regex="^is_")
+yao_is_columns
+```
+
+## rename
+```{python}
+yao.rename(columns={"age": "patient_age", "sex":"patient_sex"
+})
+```
+
+#practice rename cols 
+```{python}
+age_cat=yao.rename(columns={"age_category": "age_cat"
+})
+age_cat
+```
+
+
+# cleaning cols names
+
+
+```{python}
+test_df = pd.DataFrame(
+    {"good_name": range(3),
+    "bad_name": range(3),
+    "bad*name*2": range(3)}
+)
+test_df
+```
+
+
+```{python}
+test_df.columns.str.replace(r"[^a-zA-Z0-9]", "_", regex=True)
+```
+

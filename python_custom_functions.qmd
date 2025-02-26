@@ -1,0 +1,170 @@
+
+# Imports
+```{python}
+import pandas as pd
+import numpy as np
+import vega_datasets as vd
+```
+
+
+```{python}
+def pds_to_kg(pounds):
+    return pounds * 0.4536
+```
+
+```{python}
+def pds_to_kg(pounds):
+    kg = pounds*0.4536
+    return kg
+```
+
+```{python}
+#pds_to_kg(150)
+pds_to_kg (pounds=150)
+```
+
+# using inside adataframe
+
+```{python}
+pounds_df =pd.DataFrame({"pounds": [150, 200, 250]})
+pounds_df
+```
+
+
+```{python}
+pounds_df["kg"] = pds_to_kg(pounds_df["pounds"])
+pounds_df
+```
+
+```{python}
+riots_df = vd.data.la_riots()
+riots_df 
+```
+# Practice Q1
+```{python}
+def years_to_months(age):
+    return age * 12
+```
+
+
+```{python}
+riots_df["age_months"] = years_to_months(riots_df["age"])
+riots_df
+```
+
+# Functions with multiple arguements
+
+```{python}
+def calc_calories(carb_grams, protein_grams, fat_grams):
+    result = (carb_grams*4) + (protein_grams*4) + (fat_grams*9)
+    return result
+```
+
+
+```{python}
+calc_calories(carb_grams=50, protein_grams=25, fat_grams=15)
+```
+
+```{python}
+#doesnt work due to missing arguement
+#calc_calories(carb_grams=50, protein_grams=25)
+```
+
+
+# default argument
+```{python}
+def calc_calories2(carb_grams=0, protein_grams=0, fat_grams=0):
+    result = (carb_grams*4) + (protein_grams*4) + (fat_grams*9)
+    return result
+```
+
+
+```{python}
+calc_calories2(carb_grams=50)
+```
+
+
+```{python}
+food_df = pd.DataFrame({
+    "food": ["Apple", "Avacado"],
+    "carb": [25, 10],
+    "protein": [0, 1],
+    "fat": [0, 14]
+})
+
+food_df
+```
+
+
+```{python}
+food_df["calories"] = calc_calories2(food_df["carb"], food_df["protein"], food_df["fat"])
+
+food_df
+```
+
+# Pract Q2
+
+```{python}
+def calc_bmi(weights, heights):
+    return calc_bmi
+```
+
+```{python}
+bmi_df = pd.DataFrame({
+    'Weight': [70, 80, 100], # in kg
+    'Height': [1.7, 1.8, 1.2] # in meters
+})
+bmi_df["BMI"] = calc_bmi(bmi_df["Weight"], bmi_df["Height"])
+bmi_df
+```
+
+# Intoduction to conditionals: if, elif, else
+
+```{python}
+def class_num(num):
+    if num > 0:
+        return "Positive"
+    elif num < 0:
+        return "Negative"
+    elif num == 0:
+        return "Zero"
+    else:
+        return "Invalid"
+print(class_num(5))
+print(class_num(0))
+print(class_num(-5))
+print(class_num(np.nan))
+```
+
+
+# prac 3
+
+```{python}
+def categorize_age(age):
+    if age < 18:
+        return 'Minor'
+    elif age >= 18 and age < 65:
+        return 'Adult'
+    else:
+        return 'Invalid age'
+
+#categorize_grade(95)  # Output: Excellent
+```
+
+
+```{python}
+riots_df = vd.data.la_riots()
+riots_df
+```
+
+
+```{python}
+categorize_age = np.vectorize(categorize_age)
+```
+
+
+```{python}
+age_df = pd.DataFrame({'age': [95, 82, 76, 65, 58, -5]})
+age_df['age_cat'] = categorize_age(age_df['age'])
+age_df
+```

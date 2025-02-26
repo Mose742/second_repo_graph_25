@@ -1,0 +1,142 @@
+# Imports
+
+```{python}
+import pandas as pd
+```
+
+# dataset
+
+```{python}
+yaounde = pd.read_csv("data/yaounde_data.csv")
+```
+
+
+```{python}
+yao = yaounde[["age", "sex", "weight_kg", "neighborhood", "occupation", "symptoms", "is_smoker", "is_pregnant", "igg_result", "igm_result"]]
+yao
+```
+
+# introduce query
+
+
+```{python}
+yao.query("sex=='Male'")
+```
+
+# rows fullfilling criteria
+```{python}
+yao.query("sex=='Male'").shape[0]
+```
+
+```{python}
+yao_pregnant=yao.query("is_pregnant=='Yes'")
+yao_pregnant
+```
+
+# relational operators
+
+
+```{python}
+yao.query("sex=='Male'")
+yao.query("sex!='Male'") #not equal
+yao.query("age>7")
+yao.query("age>=7")
+yao.query("age<7")
+yao.query("age<=7")
+#is in
+yao.query("age>7")
+yao.query("neighborhood.isin(['Briqueterie', 'Carriere'])")
+```
+
+
+# Practice
+
+
+```{python}
+yao_children = yao.query ("age < 18")
+yao_children
+```
+
+
+```{python}
+yao_carrire_ekodou = yao.query("neighborhood.isin(['Ekoudou', 'Carriere'])")
+yao_carrire_ekodou
+```
+
+# accessing external var
+
+
+```{python}
+max_age = 30
+yao_young=yao.query("age>=@max_age")
+yao_young
+```
+
+# combining conditions
+
+```{python}
+yao.query("age<18|age>65")
+```
+
+
+```{python}
+yao.is_smoker.value_counts()
+```
+
+# practice
+
+
+```{python}
+yao_igg_positive_men= yao.query("igg_result == 'Positive' &sex=='Male'")
+yao_igg_positive_men
+```
+
+# negating with ~ operators
+
+```{python}
+#not students
+yao.query("~(occupation == 'Student')")
+
+```
+```{python}
+#not students
+yao.query("occupation != 'Student' ")
+
+```
+
+
+```{python}
+yao_dropped=yao.query("~(age>50 | is_smoker=='Smoker')")
+yao_dropped
+```
+
+# NaN values
+
+```{python}
+yao.query("is_pregnant.isna()")
+```
+
+```{python}
+yao.query("is_pregnant.notna()")
+```
+
+# Practice
+```{python}
+yao.query("is_smoker.isna()")
+```
+
+# query based on patern
+
+
+```{python}
+yao.query("occupation.str.contains('Student')")
+```
+
+```{python}
+yao.query("~(occupation.str.contains('Student'))")
+```
+
+# practice
+```{python}
+yao.query("symptoms.str.contains('Cough|Fever')")
+```

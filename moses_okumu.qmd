@@ -1,0 +1,272 @@
+---
+title: "GAPMINDER | DAILY INCOME 2019 AND CHILD MORTALITY RATES 2020"  
+author: Moses Okumu
+format: dashboard 
+theme: flatly 
+---
+
+
+```{python}
+import pandas as pd
+import plotly.express as px
+import itables 
+```
+
+
+```{python}
+# load data
+daily_income = pd.read_csv(r"C:\Users\Moses Okumu\Documents\GitHub\my_first_repo_2025\daily_income.csv",sep="\t", encoding="utf-8") 
+#daily_income
+
+# load data 2
+child_mortality = pd.read_csv(r"C:\Users\Moses Okumu\Documents\GitHub\my_first_repo_2025\child_mortality.csv",sep="\t",encoding="utf-8") 
+#child_mortality
+
+# child mortality data
+filtered_mortality = child_mortality[["country" , "2020"]]
+#filtered_mortality
+```
+
+
+
+```{python}
+df_filtered_income = daily_income[["country" , "2019"]]
+#df_filtered_income
+```
+
+
+```{python}
+# Find the maximum avg income
+max_income_value = df_filtered_income["2019"].max()
+max_income_country = df_filtered_income.loc[df_filtered_income["2019"].idxmax(), "country"]
+#print(max_income_value)
+#print(max_income_country)
+```
+
+```{python}
+# Find the minimum avg income
+min_income_value = df_filtered_income["2019"].min()
+min_income_country = df_filtered_income.loc[df_filtered_income["2019"].idxmin(), "country"]
+#print(min_income_value)
+#print(min_income_country)
+```
+
+
+```{python}
+# Compute the ovveral mean
+average_overal = round(df_filtered_income["2019"].mean(),2)
+#print(average_overal)
+```
+
+
+
+```{python}
+# Create the map using plotly express with a blue color scale
+map_fig = px.choropleth(
+    df_filtered_income,
+    locations="country",
+    color="2019",
+    hover_name="country",
+    title="Map of Countries by Daily Income",
+    color_continuous_scale="Blues",
+    locationmode="country names",  # Ensure Plotly uses country names
+).update_layout(coloraxis_showscale=False)
+
+#map_fig.show()
+
+```
+
+
+```{python}
+# Largest 15 countries by average daily Income (bar chart) with a blue color scale
+top_15 = df_filtered_income.nlargest(15, "2019").sort_values("2019", ascending=True)
+bar_fig = px.bar(
+    top_15,
+    x="2019",
+    y="country",
+    title="Daily avg income 15 Largest Countries",
+    color="2019",
+    color_continuous_scale="Blues",
+).update_layout(coloraxis_showscale=False)
+#bar_fig
+```
+
+
+# DAILY AVERAGE INCOME
+
+## Row 1 {height=30%}
+
+::: {.valuebox icon="arrow-up" color="#1E90FF" title="Maximum average income"}
+
+`{python} str(max_income_value)`
+
+`{python} max_income_country`
+
+:::
+
+::: {.valuebox icon="arrow-down" color="#87CEFA" title="Minimum average income"} 
+
+`{python} str(min_income_value)`
+
+`{python} min_income_country`
+
+:::
+
+::: {.valuebox icon="bar-chart" color="#4682B4" title="Income mean across 2019"}
+
+`{python} str(average_overal)`
+
+:::
+
+## Row 2 {height=60%}
+
+### {width=70%}
+
+```{python}
+map_fig
+```
+
+### {width=40%}
+
+```{python}
+bar_fig
+```
+
+# CHILD MORTALITY
+
+## Row 1 {height=30%}
+
+```{python}
+# Sort by mortality rate in ascending order (lowest rates first)
+df_bottom_10 = filtered_mortality.sort_values(by="2020", ascending=True).head(10)
+
+# Display as an interactive table
+display(itables.show(df_bottom_10))
+```
+
+## Row 2 {height=70%}
+
+### Column {width="80%"}
+
+```{python}
+#import pandas as pd
+import matplotlib.pyplot as plt
+
+# Clean column names
+#df.columns = df.columns.str.strip()
+
+# Select East African countries
+east_africa = ["Kenya", "Tanzania", "Uganda", "Rwanda", "Burundi"]
+df_filtered = child_mortality[child_mortality["country"].isin(east_africa)][["country", "2020"]]
+
+# Convert values to percentages
+df_filtered["percentage"] = df_filtered["2020"] / df_filtered["2020"].sum() * 100
+
+# Plot Stacked Percentage Bar Graph
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(df_filtered["country"], df_filtered["percentage"], color=["blue", "green", "red", "purple", "orange"])
+
+# Formatting
+ax.set_title("Child Mortality Distribution in East Africa (2019)")
+ax.set_ylabel("Percentage (%)")
+ax.set_xlabel("Country")
+
+# Show values on bars
+for i, v in enumerate(df_filtered["percentage"]):
+    ax.text(i, v + 0.5, f"{v:.2f}%", ha="center", fontsize=10)
+
+plt.show()
+
+
+```
+
+
+### Column {width="20%"}
+
+The bar chart illustrates the distribution of child mortality rates across five East African countries in 2019, expressed as percentages.  
+The chart highlights disparities in child mortality within the region, with Burundi and Tanzania experiencing the highest rates. These variations suggest differences in healthcare access, maternal health services, and socio-economic factors. Addressing child mortality requires targeted interventions, improved healthcare infrastructure, and policies to enhance child survival in the most affected countries.
+
+# RELATIONSHIP
+
+## Row 1 {height=50%}
+
+```{python}
+# Merge the datasets on 'country'
+merged_df = pd.merge(df_filtered_income, filtered_mortality, on='country', how='inner')
+
+# Display the first few rows
+#print(merged_df)
+```
+
+```{python}
+
+  import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set theme
+sns.set_style("whitegrid")
+
+# Create scatter plot
+plt.figure(figsize=(10, 6))
+scatter = sns.scatterplot(
+    data=merged_df, 
+    x="2019", 
+    y="2020", 
+    hue="country", 
+    palette="viridis", 
+    s=120, 
+    edgecolor="black", 
+    alpha=0.8,
+    legend=False  # Removes the long country list
+)
+
+# Labels and title
+plt.xlabel("Year 2019", fontsize=12)
+plt.ylabel("Year 2020", fontsize=12)
+plt.title("Comparison of average daily income in 2019 vs child mortality rate in 2020", fontsize=14, fontweight="bold")
+
+# Show plot
+#plt.show()
+```
+
+
+
+## Row 2 {height=50%}
+
+### Column {width="80%"}
+
+### Column {width="20%"}
+
+Analysis of the Relationship
+The scatter plot illustrates the relationship between average daily income in 2019 and child mortality rate in 2020 across different countries. Key observations:
+1.	Negative Correlation – Higher daily income in 2019 is associated with lower child mortality in 2020.
+2.	Clustered Data – Countries with lower incomes (left side of the graph) have a higher variation in child mortality rates, while wealthier countries (right side) show consistently low mortality rates.
+3.	Non-Linear Trend – A sharp drop in child mortality occurs at relatively low income levels, suggesting that even modest income increases significantly impact child survival.
+4.	Outliers – Some countries with very low daily income have exceptionally high child mortality rates, indicating extreme vulnerability.
+Recommendations
+🔹 Target Low-Income Countries – Prioritize investments in healthcare and social programs for nations with the lowest income levels.
+🔹 Improve Healthcare Access – Strengthen maternal and child health services, especially in economically weaker regions.
+🔹 Promote Economic Growth – Encourage income-generating activities, microfinance, and employment opportunities to lift families out of poverty.
+🔹 Intervene Early – Provide direct child survival interventions (e.g., vaccination, nutrition programs) in the most affected areas.
+🔹 Monitor Outliers – Investigate countries with extremely high child mortality rates to identify specific barriers to healthcare and economic development.
+Would you like a deeper statistical analysis or policy recommendations?
+
+
+# ABOUT
+
+**Child Mortality Dataset**
+This dataset tracks child mortality rates (deaths per 1,000 live births) across countries, focusing on 2019. It helps analyze regional disparities, assess global child survival progress, and guide policy decisions. Insights from this data support targeted interventions and improvements in healthcare for reducing child mortality rates worldwide.  
+
+**Daily Income Dataset**
+The daily income dataset contains income levels across countries over time, including 2019. It helps assess economic disparities, track poverty trends, and analyze income distribution. By comparing countries, policymakers and researchers can identify regions with low income levels and design strategies for economic development and poverty reduction. 
+
+**Watch Rosling’s Factpod:**
+
+<iframe width="560" height="315" 
+        src="https://www.youtube.com/embed/IX-BXr8wjsM" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+</iframe>
